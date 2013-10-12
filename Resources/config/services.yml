@@ -1,0 +1,7 @@
+parameters:
+    omnipay.service.class: Xola\OmnipayBundle\Service\Omnipay
+
+services:
+    omnipay:
+        class: %omnipay.service.class%
+        arguments: [ %omnipay% ]
