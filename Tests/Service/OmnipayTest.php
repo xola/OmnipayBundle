@@ -8,6 +8,12 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 {
     public function testCreateAuthorizeNetAIM()
     {
+        // Do not run test if Gateway has not been included
+        if(!class_exists('Omnipay\\AuthorizeNet\\AIMGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\AuthorizeNet\\AIMGateway not found');
+            return;
+        }
+
         $config = array(
             'authorize_net_aim' => array(
                 'apiLoginId' => 'abc123',
@@ -27,6 +33,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateAuthorizeNetSIM()
     {
+        if(!class_exists('Omnipay\\AuthorizeNet\\SIMGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\AuthorizeNet\\SIMGateway not found');
+            return;
+        }
+
         $config = array(
             'authorize_net_sim' => array(
                 'apiLoginId' => 'abc123',
@@ -46,6 +57,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateBuckaroo()
     {
+        if(!class_exists('Omnipay\\Buckaroo\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Buckaroo\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'buckaroo' => array(
                 'merchantId' => 'abc123',
@@ -65,6 +81,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateCardSave()
     {
+        if(!class_exists('Omnipay\\CardSave\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\CardSave\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'card_save' => array(
                 'merchantId' => 'abc123',
@@ -84,6 +105,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateEwayRapid()
     {
+        if(!class_exists('Omnipay\\Eway\\RapidGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Eway\\RapidGateway not found');
+            return;
+        }
+
         $config = array(
             'eway_rapid' => array(
                 'apiKey' => 'abc123',
@@ -103,6 +129,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateGoCardless()
     {
+        if(!class_exists('Omnipay\\GoCardless\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\GoCardless\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'go_cardless' => array(
                 'appId' => 'abc123',
@@ -126,6 +157,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMigsTwoParty()
     {
+        if(!class_exists('Omnipay\\Migs\\TwoPartyGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Migs\\TwoPartyGateway not found');
+            return;
+        }
+
         $config = array(
             'migs_two_party' => array(
                 'merchantId' => 'abc123',
@@ -147,6 +183,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMigsThreeParty()
     {
+        if(!class_exists('Omnipay\\Migs\\ThreePartyGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Migs\\ThreePartyGateway not found');
+            return;
+        }
+
         $config = array(
             'migs_three_party' => array(
                 'merchantId' => 'abc123',
@@ -168,6 +209,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMollie()
     {
+        if(!class_exists('Omnipay\\Mollie\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Mollie\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'mollie' => array(
                 'partnerId' => 'abc123',
@@ -185,6 +231,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMultiSafepay()
     {
+        if(!class_exists('Omnipay\\MultiSafepay\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\MultiSafepay\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'multi_safepay' => array(
                 'accountId' => 'abc123',
@@ -206,6 +257,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateNetaxept()
     {
+        if(!class_exists('Omnipay\\Netaxept\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Netaxept\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'netaxept' => array(
                 'merchantId' => 'abc123',
@@ -225,6 +281,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateNetBanx()
     {
+        if(!class_exists('Omnipay\\NetBanx\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\NetBanx\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'net_banx' => array(
                 'accountNumber' => 'abc123',
@@ -246,6 +307,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayFast()
     {
+        if(!class_exists('Omnipay\\PayFast\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\PayFast\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'pay_fast' => array(
                 'merchantId' => 'abc123',
@@ -267,6 +333,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayflow()
     {
+        if(!class_exists('Omnipay\\Payflow\\ProGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Payflow\\ProGateway not found');
+            return;
+        }
+
         $config = array(
             'payflow_pro' => array(
                 'username' => 'abc123',
@@ -290,6 +361,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePaymentExpressPxPay()
     {
+        if(!class_exists('Omnipay\\PaymentExpress\\PxPayGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\PaymentExpress\\PxPayGateway not found');
+            return;
+        }
+
         $config = array(
             'payment_express_px_pay' => array(
                 'username' => 'abc123',
@@ -309,6 +385,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePaymentExpressPxPost()
     {
+        if(!class_exists('Omnipay\\PaymentExpress\\PxPostGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\PaymentExpress\\PxPostGateway not found');
+            return;
+        }
+
         $config = array(
             'payment_express_px_post' => array(
                 'username' => 'abc123',
@@ -328,6 +409,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayPalPro()
     {
+        if(!class_exists('Omnipay\\PayPal\\ProGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\PayPal\\ProGateway not found');
+            return;
+        }
+
         $config = array(
             'pay_pal_pro' => array(
                 'username' => 'abc123',
@@ -349,6 +435,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayPalExpress()
     {
+        if(!class_exists('Omnipay\\PayPal\\ExpressGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\PayPal\\ExpressGateway not found');
+            return;
+        }
+
         $config = array(
             'pay_pal_express' => array(
                 'username' => 'abc123',
@@ -376,6 +467,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePin()
     {
+        if(!class_exists('Omnipay\\Pin\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Pin\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'pin' => array(
                 'secretKey' => 'abc123'
@@ -393,6 +489,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSagePayDirect()
     {
+        if(!class_exists('Omnipay\\SagePay\\DirectGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\SagePay\\DirectGateway not found');
+            return;
+        }
+
         $config = array(
             'sage_pay_direct' => array(
                 'vendor' => 'abc123'
@@ -410,6 +511,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSagePayServer()
     {
+        if(!class_exists('Omnipay\\SagePay\\ServerGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\SagePay\\ServerGateway not found');
+            return;
+        }
+
         $config = array(
             'sage_pay_server' => array(
                 'vendor' => 'abc123'
@@ -427,6 +533,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSecurePayDirectPost()
     {
+        if(!class_exists('Omnipay\\SecurePay\\DirectPostGateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\SecurePay\\DirectPostGateway not found');
+            return;
+        }
+
         $config = array(
             'secure_pay_direct_post' => array(
                 'merchantId' => 'abc123',
@@ -444,8 +555,16 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('xyz987', $gateway->getTransactionPassword(), 'Transaction password must match configuration');
     }
 
+    /**
+     * @requires function
+     */
     public function testCreateStripe()
     {
+        if(!class_exists('Omnipay\\Stripe\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\Stripe\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'stripe' => array(
                 'apiKey' => 'abc123'
@@ -463,6 +582,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateTwoCheckout()
     {
+        if(!class_exists('Omnipay\\TwoCheckout\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\TwoCheckout\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'two_checkout' => array(
                 'accountNumber' => 'abc123',
@@ -482,6 +606,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateWorldPay()
     {
+        if(!class_exists('Omnipay\\WorldPay\\Gateway')) {
+            $this->markTestSkipped('Gateway Omnipay\\WorldPay\\Gateway not found');
+            return;
+        }
+
         $config = array(
             'world_pay' => array(
                 'installationId' => 'abc123',
