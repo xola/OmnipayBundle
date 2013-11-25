@@ -7,9 +7,6 @@ php:
 
 env:
   - SYMFONY_VERSION="2.1" GUZZLE_VERSION="3.1"
-  - SYMFONY_VERSION="2.*" GUZZLE_VERSION="3.1"
-  - SYMFONY_VERSION="2.1" GUZZLE_VERSION="3.*"
-  - SYMFONY_VERSION="2.*" GUZZLE_VERSION="3.*"
 
 before_script:
   - composer self-update
@@ -18,4 +15,4 @@ before_script:
   - composer require guzzle/http:${GUZZLE_VERSION} --no-update
   - composer install -n --dev --prefer-source
 
-script: vendor/bin/phpunit --coverage-text --configuration phpunit.xml.dist
+script: phpunit --coverage-text --configuration phpunit.xml.dist
