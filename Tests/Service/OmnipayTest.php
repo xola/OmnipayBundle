@@ -6,73 +6,116 @@ use Xola\OmnipayBundle\Service\Omnipay;
 
 class OmnipayTest extends \PHPUnit_Framework_TestCase
 {
+    private function buildService($params = array())
+    {
+        $defaults = array(
+            'container' => $this->getMock('Symfony\Component\DependencyInjection\Container')
+        );
+
+        $params = array_merge($defaults, $params);
+
+        return new Omnipay($params['container']);
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return \Symfony\Component\DependencyInjection\Container
+     */
+    private function getServiceContainer($params)
+    {
+        $parameterBag = $this->getMock('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface');
+
+        $parameterBag
+            ->expects($this->any())
+            ->method('all')
+            ->will($this->returnValue($params));
+
+        $serviceContainer = $this->getMock('Symfony\Component\DependencyInjection\Container');
+
+        $serviceContainer
+            ->expects($this->once())
+            ->method('getParameterBag')
+            ->will($this->returnValue($parameterBag));
+
+        return $serviceContainer;
+    }
+
     public function testCreateAuthorizeNetAIM()
     {
         // Do not run test if Gateway has not been included
-        if(!class_exists('Omnipay\\AuthorizeNet\\AIMGateway')) {
+        if (!class_exists('Omnipay\\AuthorizeNet\\AIMGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\AuthorizeNet\\AIMGateway not found');
+
             return;
         }
 
         $config = array(
-            'authorize_net_aim' => array(
-                'apiLoginId' => 'abc123',
-                'transactionKey' => 'xyz987',
-            )
+            'omnipay.authorize_net_aim.apiLoginId' => 'abc123',
+            'omnipay.authorize_net_aim.transactionKey' => 'xyz987',
+            'omnipay.authorize_net_aim.gateway' => 'AuthorizeNet_AIM'
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\AuthorizeNet\AIMGateway $gateway */
-        $gateway = $service->create('AuthorizeNet_AIM');
+        $gateway = $service->create('authorize_net_aim');
 
-        $this->assertInstanceOf('Omnipay\\AuthorizeNet\\AIMGateway', $gateway, 'Must return an Authorize.NET AIM gateway');
+        $this->assertInstanceOf(
+            'Omnipay\\AuthorizeNet\\AIMGateway',
+            $gateway,
+            'Must return an Authorize.NET AIM gateway'
+        );
         $this->assertEquals('abc123', $gateway->getApiLoginId(), 'API login ID must match configuration');
         $this->assertEquals('xyz987', $gateway->getTransactionKey(), 'Transaction key must match configuration');
     }
 
     public function testCreateAuthorizeNetSIM()
     {
-        if(!class_exists('Omnipay\\AuthorizeNet\\SIMGateway')) {
+        if (!class_exists('Omnipay\\AuthorizeNet\\SIMGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\AuthorizeNet\\SIMGateway not found');
+
             return;
         }
 
         $config = array(
-            'authorize_net_sim' => array(
-                'apiLoginId' => 'abc123',
-                'transactionKey' => 'xyz987',
-            )
+            'omnipay.authorize_net_sim.apiLoginId' => 'abc123',
+            'omnipay.authorize_net_sim.transactionKey' => 'xyz987',
+            'omnipay.authorize_net_sim.gateway' => 'AuthorizeNet_SIM',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\AuthorizeNet\AIMGateway $gateway */
-        $gateway = $service->create('AuthorizeNet_SIM');
+        $gateway = $service->create('authorize_net_sim');
 
-        $this->assertInstanceOf('Omnipay\\AuthorizeNet\\SIMGateway', $gateway, 'Must return an Authorize.NET SIM gateway');
+        $this->assertInstanceOf(
+            'Omnipay\\AuthorizeNet\\SIMGateway',
+            $gateway,
+            'Must return an Authorize.NET SIM gateway'
+        );
         $this->assertEquals('abc123', $gateway->getApiLoginId(), 'API login ID must match configuration');
         $this->assertEquals('xyz987', $gateway->getTransactionKey(), 'Transaction key must match configuration');
     }
 
     public function testCreateBuckaroo()
     {
-        if(!class_exists('Omnipay\\Buckaroo\\Gateway')) {
+        if (!class_exists('Omnipay\\Buckaroo\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Buckaroo\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'buckaroo' => array(
-                'merchantId' => 'abc123',
-                'secret' => 'xyz987',
-            )
+            'omnipay.buckaroo.merchantId' => 'abc123',
+            'omnipay.buckaroo.secret' => 'xyz987',
+            'omnipay.buckaroo.gateway' => 'Buckaroo',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Buckaroo\Gateway $gateway */
-        $gateway = $service->create('Buckaroo');
+        $gateway = $service->create('buckaroo');
 
         $this->assertInstanceOf('Omnipay\\Buckaroo\\Gateway', $gateway, 'Must return a Buckaroo gateway');
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
@@ -81,22 +124,22 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateCardSave()
     {
-        if(!class_exists('Omnipay\\CardSave\\Gateway')) {
+        if (!class_exists('Omnipay\\CardSave\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\CardSave\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'card_save' => array(
-                'merchantId' => 'abc123',
-                'password' => 'xyz987',
-            )
+            'omnipay.card_save.merchantId' => 'abc123',
+            'omnipay.card_save.password' => 'xyz987',
+            'omnipay.card_save.gateway' => 'CardSave',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\CardSave\Gateway $gateway */
-        $gateway = $service->create('CardSave');
+        $gateway = $service->create('card_save');
 
         $this->assertInstanceOf('Omnipay\\CardSave\\Gateway', $gateway, 'Must return a CardSave gateway');
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
@@ -105,22 +148,22 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateEwayRapid()
     {
-        if(!class_exists('Omnipay\\Eway\\RapidGateway')) {
+        if (!class_exists('Omnipay\\Eway\\RapidGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Eway\\RapidGateway not found');
+
             return;
         }
 
         $config = array(
-            'eway_rapid' => array(
-                'apiKey' => 'abc123',
-                'password' => 'xyz987',
-            )
+            'omnipay.eway_rapid.apiKey' => 'abc123',
+            'omnipay.eway_rapid.password' => 'xyz987',
+            'omnipay.eway_rapid.gateway' => 'Eway_Rapid',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Eway\RapidGateway $gateway */
-        $gateway = $service->create('Eway_Rapid');
+        $gateway = $service->create('eway_rapid');
 
         $this->assertInstanceOf('Omnipay\\Eway\\RapidGateway', $gateway, 'Must return an eWAY Rapid gateway');
         $this->assertEquals('abc123', $gateway->getApiKey(), 'API key must match configuration');
@@ -129,24 +172,24 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateGoCardless()
     {
-        if(!class_exists('Omnipay\\GoCardless\\Gateway')) {
+        if (!class_exists('Omnipay\\GoCardless\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\GoCardless\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'go_cardless' => array(
-                'appId' => 'abc123',
-                'appSecret' => 'xyz987',
-                'merchantId' => 'pqr567',
-                'accessToken' => 'uvw543',
-            )
+            'omnipay.go_cardless.appId' => 'abc123',
+            'omnipay.go_cardless.appSecret' => 'xyz987',
+            'omnipay.go_cardless.merchantId' => 'pqr567',
+            'omnipay.go_cardless.accessToken' => 'uvw543',
+            'omnipay.go_cardless.gateway' => 'GoCardless',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\GoCardless\Gateway $gateway */
-        $gateway = $service->create('GoCardless');
+        $gateway = $service->create('go_cardless');
 
         $this->assertInstanceOf('Omnipay\\GoCardless\\Gateway', $gateway, 'Must return a GoCardless gateway');
         $this->assertEquals('abc123', $gateway->getAppId(), 'App ID must match configuration');
@@ -157,73 +200,81 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMigsTwoParty()
     {
-        if(!class_exists('Omnipay\\Migs\\TwoPartyGateway')) {
+        if (!class_exists('Omnipay\\Migs\\TwoPartyGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Migs\\TwoPartyGateway not found');
+
             return;
         }
 
         $config = array(
-            'migs_two_party' => array(
-                'merchantId' => 'abc123',
-                'merchantAccessCode' => 'xyz987',
-                'secureHash' => 'pqr567',
-            )
+            'omnipay.migs_two_party.merchantId' => 'abc123',
+            'omnipay.migs_two_party.merchantAccessCode' => 'xyz987',
+            'omnipay.migs_two_party.secureHash' => 'pqr567',
+            'omnipay.migs_two_party.gateway' => 'Migs_TwoParty',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Migs\TwoPartyGateway $gateway */
-        $gateway = $service->create('Migs_TwoParty');
+        $gateway = $service->create('migs_two_party');
 
         $this->assertInstanceOf('Omnipay\\Migs\\TwoPartyGateway', $gateway, 'Must return a MIGS 2-Party gateway');
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
-        $this->assertEquals('xyz987', $gateway->getMerchantAccessCode(), 'Merchant access code must match configuration');
+        $this->assertEquals(
+            'xyz987',
+            $gateway->getMerchantAccessCode(),
+            'Merchant access code must match configuration'
+        );
         $this->assertEquals('pqr567', $gateway->getSecureHash(), 'Secure hash must match configuration');
     }
 
     public function testCreateMigsThreeParty()
     {
-        if(!class_exists('Omnipay\\Migs\\ThreePartyGateway')) {
+        if (!class_exists('Omnipay\\Migs\\ThreePartyGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Migs\\ThreePartyGateway not found');
+
             return;
         }
 
         $config = array(
-            'migs_three_party' => array(
-                'merchantId' => 'abc123',
-                'merchantAccessCode' => 'xyz987',
-                'secureHash' => 'pqr567',
-            )
+            'omnipay.migs_three_party.merchantId' => 'abc123',
+            'omnipay.migs_three_party.merchantAccessCode' => 'xyz987',
+            'omnipay.migs_three_party.secureHash' => 'pqr567',
+            'omnipay.migs_three_party.gateway' => 'Migs_ThreeParty',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Migs\ThreePartyGateway $gateway */
-        $gateway = $service->create('Migs_ThreeParty');
+        $gateway = $service->create('migs_three_party');
 
         $this->assertInstanceOf('Omnipay\\Migs\\ThreePartyGateway', $gateway, 'Must return a MIGS 3-Party gateway');
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
-        $this->assertEquals('xyz987', $gateway->getMerchantAccessCode(), 'Merchant access code must match configuration');
+        $this->assertEquals(
+            'xyz987',
+            $gateway->getMerchantAccessCode(),
+            'Merchant access code must match configuration'
+        );
         $this->assertEquals('pqr567', $gateway->getSecureHash(), 'Secure hash must match configuration');
     }
 
     public function testCreateMollie()
     {
-        if(!class_exists('Omnipay\\Mollie\\Gateway')) {
+        if (!class_exists('Omnipay\\Mollie\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Mollie\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'mollie' => array(
-                'partnerId' => 'abc123',
-            )
+            'omnipay.mollie.partnerId' => 'abc123',
+            'omnipay.mollie.gateway' => 'Mollie',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Mollie\Gateway $gateway */
-        $gateway = $service->create('Mollie');
+        $gateway = $service->create('mollie');
 
         $this->assertInstanceOf('Omnipay\\Mollie\\Gateway', $gateway, 'Must return a Mollie gateway');
         $this->assertEquals('abc123', $gateway->getPartnerId(), 'Partner ID must match configuration');
@@ -231,23 +282,23 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMultiSafepay()
     {
-        if(!class_exists('Omnipay\\MultiSafepay\\Gateway')) {
+        if (!class_exists('Omnipay\\MultiSafepay\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\MultiSafepay\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'multi_safepay' => array(
-                'accountId' => 'abc123',
-                'siteId' => 'xyz987',
-                'siteCode' => 'pqr567',
-            )
+            'omnipay.multi_safepay.accountId' => 'abc123',
+            'omnipay.multi_safepay.siteId' => 'xyz987',
+            'omnipay.multi_safepay.siteCode' => 'pqr567',
+            'omnipay.multi_safepay.gateway' => 'MultiSafepay',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\MultiSafepay\Gateway $gateway */
-        $gateway = $service->create('MultiSafepay');
+        $gateway = $service->create('multi_safepay');
 
         $this->assertInstanceOf('Omnipay\\MultiSafepay\\Gateway', $gateway, 'Must return a MultiSafepay gateway');
         $this->assertEquals('abc123', $gateway->getAccountId(), 'Account ID must match configuration');
@@ -257,22 +308,22 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateNetaxept()
     {
-        if(!class_exists('Omnipay\\Netaxept\\Gateway')) {
+        if (!class_exists('Omnipay\\Netaxept\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Netaxept\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'netaxept' => array(
-                'merchantId' => 'abc123',
-                'password' => 'xyz987',
-            )
+            'omnipay.netaxept.merchantId' => 'abc123',
+            'omnipay.netaxept.password' => 'xyz987',
+            'omnipay.netaxept.gateway' => 'Netaxept',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Netaxept\Gateway $gateway */
-        $gateway = $service->create('Netaxept');
+        $gateway = $service->create('netaxept');
 
         $this->assertInstanceOf('Omnipay\\Netaxept\\Gateway', $gateway, 'Must return a Netaxept gateway');
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
@@ -281,23 +332,23 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateNetBanx()
     {
-        if(!class_exists('Omnipay\\NetBanx\\Gateway')) {
+        if (!class_exists('Omnipay\\NetBanx\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\NetBanx\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'net_banx' => array(
-                'accountNumber' => 'abc123',
-                'storeId' => 'xyz987',
-                'storePassword' => 'pqr567',
-            )
+            'omnipay.net_banx.accountNumber' => 'abc123',
+            'omnipay.net_banx.storeId' => 'xyz987',
+            'omnipay.net_banx.storePassword' => 'pqr567',
+            'omnipay.net_banx.gateway' => 'NetBanx',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\NetBanx\Gateway $gateway */
-        $gateway = $service->create('NetBanx');
+        $gateway = $service->create('net_banx');
 
         $this->assertInstanceOf('Omnipay\\NetBanx\\Gateway', $gateway, 'Must return a NetBanx gateway');
         $this->assertEquals('abc123', $gateway->getAccountNumber(), 'Account number must match configuration');
@@ -307,23 +358,23 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayFast()
     {
-        if(!class_exists('Omnipay\\PayFast\\Gateway')) {
+        if (!class_exists('Omnipay\\PayFast\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\PayFast\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'pay_fast' => array(
-                'merchantId' => 'abc123',
-                'merchantKey' => 'xyz987',
-                'pdtKey' => 'pqr567',
-            )
+            'omnipay.pay_fast.merchantId' => 'abc123',
+            'omnipay.pay_fast.merchantKey' => 'xyz987',
+            'omnipay.pay_fast.pdtKey' => 'pqr567',
+            'omnipay.pay_fast.gateway' => 'PayFast',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\PayFast\Gateway $gateway */
-        $gateway = $service->create('PayFast');
+        $gateway = $service->create('pay_fast');
 
         $this->assertInstanceOf('Omnipay\\PayFast\\Gateway', $gateway, 'Must return a PayFast gateway');
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
@@ -333,24 +384,24 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayflow()
     {
-        if(!class_exists('Omnipay\\Payflow\\ProGateway')) {
+        if (!class_exists('Omnipay\\Payflow\\ProGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Payflow\\ProGateway not found');
+
             return;
         }
 
         $config = array(
-            'payflow_pro' => array(
-                'username' => 'abc123',
-                'password' => 'xyz987',
-                'vendor' => 'pqr567',
-                'partner' => 'uvw543',
-            )
+            'omnipay.payflow_pro.username' => 'abc123',
+            'omnipay.payflow_pro.password' => 'xyz987',
+            'omnipay.payflow_pro.vendor' => 'pqr567',
+            'omnipay.payflow_pro.partner' => 'uvw543',
+            'omnipay.payflow_pro.gateway' => 'Payflow_Pro',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Payflow\ProGateway $gateway */
-        $gateway = $service->create('Payflow_Pro');
+        $gateway = $service->create('payflow_pro');
 
         $this->assertInstanceOf('Omnipay\\Payflow\\ProGateway', $gateway, 'Must return a Payflow Pro gateway');
         $this->assertEquals('abc123', $gateway->getUsername(), 'Username must match configuration');
@@ -361,71 +412,79 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePaymentExpressPxPay()
     {
-        if(!class_exists('Omnipay\\PaymentExpress\\PxPayGateway')) {
+        if (!class_exists('Omnipay\\PaymentExpress\\PxPayGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\PaymentExpress\\PxPayGateway not found');
+
             return;
         }
 
         $config = array(
-            'payment_express_px_pay' => array(
-                'username' => 'abc123',
-                'password' => 'xyz987',
-            )
+            'omnipay.payment_express_px_pay.username' => 'abc123',
+            'omnipay.payment_express_px_pay.password' => 'xyz987',
+            'omnipay.payment_express_px_pay.gateway' => 'PaymentExpress_PxPay',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\PaymentExpress\PxPayGateway $gateway */
-        $gateway = $service->create('PaymentExpress_PxPay');
+        $gateway = $service->create('payment_express_px_pay');
 
-        $this->assertInstanceOf('Omnipay\\PaymentExpress\\PxPayGateway', $gateway, 'Must return a PaymentExpress PxPay gateway');
+        $this->assertInstanceOf(
+            'Omnipay\\PaymentExpress\\PxPayGateway',
+            $gateway,
+            'Must return a PaymentExpress PxPay gateway'
+        );
         $this->assertEquals('abc123', $gateway->getUsername(), 'Username must match configuration');
         $this->assertEquals('xyz987', $gateway->getPassword(), 'Password must match configuration');
     }
 
     public function testCreatePaymentExpressPxPost()
     {
-        if(!class_exists('Omnipay\\PaymentExpress\\PxPostGateway')) {
+        if (!class_exists('Omnipay\\PaymentExpress\\PxPostGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\PaymentExpress\\PxPostGateway not found');
+
             return;
         }
 
         $config = array(
-            'payment_express_px_post' => array(
-                'username' => 'abc123',
-                'password' => 'xyz987',
-            )
+            'omnipay.payment_express_px_post.username' => 'abc123',
+            'omnipay.payment_express_px_post.password' => 'xyz987',
+            'omnipay.payment_express_px_post.gateway' => 'PaymentExpress_PxPost',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\PaymentExpress\PxPostGateway $gateway */
-        $gateway = $service->create('PaymentExpress_PxPost');
+        $gateway = $service->create('payment_express_px_post');
 
-        $this->assertInstanceOf('Omnipay\\PaymentExpress\\PxPostGateway', $gateway, 'Must return a PaymentExpress PxPost gateway');
+        $this->assertInstanceOf(
+            'Omnipay\\PaymentExpress\\PxPostGateway',
+            $gateway,
+            'Must return a PaymentExpress PxPost gateway'
+        );
         $this->assertEquals('abc123', $gateway->getUsername(), 'Username must match configuration');
         $this->assertEquals('xyz987', $gateway->getPassword(), 'Password must match configuration');
     }
 
     public function testCreatePayPalPro()
     {
-        if(!class_exists('Omnipay\\PayPal\\ProGateway')) {
+        if (!class_exists('Omnipay\\PayPal\\ProGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\PayPal\\ProGateway not found');
+
             return;
         }
 
         $config = array(
-            'pay_pal_pro' => array(
-                'username' => 'abc123',
-                'password' => 'xyz987',
-                'signature' => 'pqr567',
-            )
+            'omnipay.pay_pal_pro.username' => 'abc123',
+            'omnipay.pay_pal_pro.password' => 'xyz987',
+            'omnipay.pay_pal_pro.signature' => 'pqr567',
+            'omnipay.pay_pal_pro.gateway' => 'PayPal_Pro',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\PayPal\ProGateway $gateway */
-        $gateway = $service->create('PayPal_Pro');
+        $gateway = $service->create('pay_pal_pro');
 
         $this->assertInstanceOf('Omnipay\\PayPal\\ProGateway', $gateway, 'Must return a PayPal Pro gateway');
         $this->assertEquals('abc123', $gateway->getUsername(), 'Username must match configuration');
@@ -435,26 +494,26 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePayPalExpress()
     {
-        if(!class_exists('Omnipay\\PayPal\\ExpressGateway')) {
+        if (!class_exists('Omnipay\\PayPal\\ExpressGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\PayPal\\ExpressGateway not found');
+
             return;
         }
 
         $config = array(
-            'pay_pal_express' => array(
-                'username' => 'abc123',
-                'password' => 'xyz987',
-                'signature' => 'pqr567',
-                'solutionType' => array('foo', 'bar'),
-                'landingPage' => array('baz'),
-                'headerImageUrl' => 'uvw543',
-            )
+            'omnipay.pay_pal_express.username' => 'abc123',
+            'omnipay.pay_pal_express.password' => 'xyz987',
+            'omnipay.pay_pal_express.signature' => 'pqr567',
+            'omnipay.pay_pal_express.solutionType' => array('foo', 'bar'),
+            'omnipay.pay_pal_express.landingPage' => array('baz'),
+            'omnipay.pay_pal_express.headerImageUrl' => 'uvw543',
+            'omnipay.pay_pal_express.gateway' => 'PayPal_Express',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\PayPal\ExpressGateway $gateway */
-        $gateway = $service->create('PayPal_Express');
+        $gateway = $service->create('pay_pal_express');
 
         $this->assertInstanceOf('Omnipay\\PayPal\\ExpressGateway', $gateway, 'Must return a PayPal Express gateway');
         $this->assertEquals('abc123', $gateway->getUsername(), 'Username must match configuration');
@@ -467,21 +526,21 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePin()
     {
-        if(!class_exists('Omnipay\\Pin\\Gateway')) {
+        if (!class_exists('Omnipay\\Pin\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Pin\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'pin' => array(
-                'secretKey' => 'abc123'
-            )
+            'omnipay.pin.secretKey' => 'abc123',
+            'omnipay.pin.gateway' => 'Pin'
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Pin\Gateway $gateway */
-        $gateway = $service->create('Pin');
+        $gateway = $service->create('pin');
 
         $this->assertInstanceOf('Omnipay\\Pin\\Gateway', $gateway, 'Must return a Pin gateway');
         $this->assertEquals('abc123', $gateway->getSecretKey(), 'API key must match configuration');
@@ -489,21 +548,21 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSagePayDirect()
     {
-        if(!class_exists('Omnipay\\SagePay\\DirectGateway')) {
+        if (!class_exists('Omnipay\\SagePay\\DirectGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\SagePay\\DirectGateway not found');
+
             return;
         }
 
         $config = array(
-            'sage_pay_direct' => array(
-                'vendor' => 'abc123'
-            )
+            'omnipay.sage_pay_direct.vendor' => 'abc123',
+            'omnipay.sage_pay_direct.gateway' => 'SagePay_Direct'
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\SagePay\DirectGateway $gateway */
-        $gateway = $service->create('SagePay_Direct');
+        $gateway = $service->create('sage_pay_direct');
 
         $this->assertInstanceOf('Omnipay\\SagePay\\DirectGateway', $gateway, 'Must return a SagePay Direct gateway');
         $this->assertEquals('abc123', $gateway->getVendor(), 'Vendor must match configuration');
@@ -511,21 +570,21 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSagePayServer()
     {
-        if(!class_exists('Omnipay\\SagePay\\ServerGateway')) {
+        if (!class_exists('Omnipay\\SagePay\\ServerGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\SagePay\\ServerGateway not found');
+
             return;
         }
 
         $config = array(
-            'sage_pay_server' => array(
-                'vendor' => 'abc123'
-            )
+            'omnipay.sage_pay_server.vendor' => 'abc123',
+            'omnipay.sage_pay_server.gateway' => 'SagePay_Server',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\SagePay\ServerGateway $gateway */
-        $gateway = $service->create('SagePay_Server');
+        $gateway = $service->create('sage_pay_server');
 
         $this->assertInstanceOf('Omnipay\\SagePay\\ServerGateway', $gateway, 'Must return a SagePay Server gateway');
         $this->assertEquals('abc123', $gateway->getVendor(), 'Vendor must match configuration');
@@ -533,26 +592,34 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateSecurePayDirectPost()
     {
-        if(!class_exists('Omnipay\\SecurePay\\DirectPostGateway')) {
+        if (!class_exists('Omnipay\\SecurePay\\DirectPostGateway')) {
             $this->markTestSkipped('Gateway Omnipay\\SecurePay\\DirectPostGateway not found');
+
             return;
         }
 
         $config = array(
-            'secure_pay_direct_post' => array(
-                'merchantId' => 'abc123',
-                'transactionPassword' => 'xyz987',
-            )
+            'omnipay.secure_pay_direct_post.merchantId' => 'abc123',
+            'omnipay.secure_pay_direct_post.transactionPassword' => 'xyz987',
+            'omnipay.secure_pay_direct_post.gateway' => 'SecurePay_DirectPost',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\SecurePay\DirectPostGateway $gateway */
-        $gateway = $service->create('SecurePay_DirectPost');
+        $gateway = $service->create('secure_pay_direct_post');
 
-        $this->assertInstanceOf('Omnipay\\SecurePay\\DirectPostGateway', $gateway, 'Must return a SecurePay Direct Post gateway');
+        $this->assertInstanceOf(
+            'Omnipay\\SecurePay\\DirectPostGateway',
+            $gateway,
+            'Must return a SecurePay Direct Post gateway'
+        );
         $this->assertEquals('abc123', $gateway->getMerchantId(), 'Merchant ID must match configuration');
-        $this->assertEquals('xyz987', $gateway->getTransactionPassword(), 'Transaction password must match configuration');
+        $this->assertEquals(
+            'xyz987',
+            $gateway->getTransactionPassword(),
+            'Transaction password must match configuration'
+        );
     }
 
     /**
@@ -560,21 +627,21 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateStripe()
     {
-        if(!class_exists('Omnipay\\Stripe\\Gateway')) {
+        if (!class_exists('Omnipay\\Stripe\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\Stripe\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'stripe' => array(
-                'apiKey' => 'abc123'
-            )
+            'omnipay.stripe.apiKey' => 'abc123',
+            'omnipay.stripe.gateway' => 'Stripe'
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\Stripe\Gateway $gateway */
-        $gateway = $service->create('Stripe');
+        $gateway = $service->create('stripe');
 
         $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'Must return a Stripe gateway');
         $this->assertEquals('abc123', $gateway->getApiKey(), 'API key must match configuration');
@@ -582,22 +649,22 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateTwoCheckout()
     {
-        if(!class_exists('Omnipay\\TwoCheckout\\Gateway')) {
+        if (!class_exists('Omnipay\\TwoCheckout\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\TwoCheckout\\Gateway not found');
+
             return;
         }
 
         $config = array(
-            'two_checkout' => array(
-                'accountNumber' => 'abc123',
-                'secretWord' => 'xyz987',
-            )
+            'omnipay.two_checkout.accountNumber' => 'abc123',
+            'omnipay.two_checkout.secretWord' => 'xyz987',
+            'omnipay.two_checkout.gateway' => 'TwoCheckout',
         );
 
-        $service = new Omnipay($config);
+        $service = new Omnipay($this->getServiceContainer($config));
 
         /** @var \Omnipay\TwoCheckout\Gateway $gateway */
-        $gateway = $service->create('TwoCheckout');
+        $gateway = $service->create('two_checkout');
 
         $this->assertInstanceOf('Omnipay\\TwoCheckout\\Gateway', $gateway, 'Must return a TwoCheckout gateway');
         $this->assertEquals('abc123', $gateway->getAccountNumber(), 'Account number must match configuration');
@@ -606,12 +673,42 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateWorldPay()
     {
-        if(!class_exists('Omnipay\\WorldPay\\Gateway')) {
+        if (!class_exists('Omnipay\\WorldPay\\Gateway')) {
             $this->markTestSkipped('Gateway Omnipay\\WorldPay\\Gateway not found');
+
             return;
         }
 
         $config = array(
+            'omnipay.world_pay.installationId' => 'abc123',
+            'omnipay.world_pay.secretWord' => 'xyz987',
+            'omnipay.world_pay.callbackPassword' => 'pqr567',
+            'omnipay.world_pay.gateway' => 'WorldPay'
+        );
+
+        $service = new Omnipay($this->getServiceContainer($config));
+
+        /** @var \Omnipay\WorldPay\Gateway $gateway */
+        $gateway = $service->create('world_pay');
+
+        $this->assertInstanceOf('Omnipay\\WorldPay\\Gateway', $gateway, 'Must return a WorldPay gateway');
+        $this->assertEquals('abc123', $gateway->getInstallationId(), 'Installation ID must match configuration');
+        $this->assertEquals('xyz987', $gateway->getSecretWord(), 'Secret word must match configuration');
+        $this->assertEquals('pqr567', $gateway->getCallbackPassword(), 'Callback password must match configuration');
+    }
+
+    public function testGetConfig()
+    {
+        $config = array(
+            'omnipay.world_pay.installationId' => 'abc123',
+            'omnipay.world_pay.secretWord' => 'xyz987',
+            'omnipay.world_pay.callbackPassword' => 'pqr567',
+        );
+        $serviceContainer = $this->getServiceContainer($config);
+
+        $service = $this->buildService(array('container' => $serviceContainer));
+
+        $expected = array(
             'world_pay' => array(
                 'installationId' => 'abc123',
                 'secretWord' => 'xyz987',
@@ -619,14 +716,6 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $service = new Omnipay($config);
-
-        /** @var \Omnipay\WorldPay\Gateway $gateway */
-        $gateway = $service->create('WorldPay');
-
-        $this->assertInstanceOf('Omnipay\\WorldPay\\Gateway', $gateway, 'Must return a WorldPay gateway');
-        $this->assertEquals('abc123', $gateway->getInstallationId(), 'Installation ID must match configuration');
-        $this->assertEquals('xyz987', $gateway->getSecretWord(), 'Secret word must match configuration');
-        $this->assertEquals('pqr567', $gateway->getCallbackPassword(), 'Callback password must match configuration');
+        $this->assertEquals($expected, $service->getConfig(), 'Array structured config should match');
     }
 }

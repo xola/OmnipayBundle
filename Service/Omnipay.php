@@ -10,26 +10,61 @@ class Omnipay
 {
     protected $config;
 
-    public function __construct($config)
+    public function __construct(Helper $container)
     {
-        $this->config = $config;
+        $this->parameters = $container->getParameterBag()->all();
     }
 
-    public function create($class)
+    public function create($name)
     {
-        /** @var GatewayInterface $gateway */
-        $gateway = GatewayFactory::create($class);
+        $config = $this->getConfig();
 
-        // Normalize the name to be underscored
-        $name = $gateway->getShortName();
-        $name = Helper::underscore($name);
-        $name = str_replace('.', '_', $name);
+        /** @var GatewayInterface $gateway */
+        $gateway = GatewayFactory::create($config[$name]['gateway']);
 
         // Initialize the gateway with config parameters
-        if(isset($this->config[$name])) {
-            $gateway->initialize($this->config[$name]);
+        if (isset($config[$name])) {
+            $gateway->initialize($config[$name]);
         }
 
         return $gateway;
+    }
+
+    public function getConfig()
+    {
+        $key = 'omnipay';
+        if (!isset($this->config)) {
+            // Asked config is not parsed yet. Parse it.
+            $configs = array($key);
+            foreach ($this->parameters as $param => $value) {
+                if (!preg_match("/^$key/", $param)) {
+                    continue;
+                }
+                $this->assignArrayByPath($configs, $param, $value);
+            }
+
+            $this->config = isset($configs[$key]) ? $configs[$key] : null;
+        }
+
+        return $this->config;
+    }
+
+    /**
+     * Helper method to convert a config in dot notation to a multi-dimensional array
+     * For example: "subscription.default: free" becomes array('subscription' => array('default' => 'free'))
+     *
+     * @param array  $arr The destination array
+     * @param string $path The config in dot notation
+     * @param string $value The value to be assigned to the config
+     */
+    private function assignArrayByPath(&$arr, $path, $value)
+    {
+        $keys = explode('.', $path);
+
+        while ($key = array_shift($keys)) {
+            $arr = & $arr[$key];
+        }
+
+        $arr = $value;
     }
 }

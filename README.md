@@ -24,32 +24,42 @@ it's possible to configure these parameters in your Symfony config files.
 
 ```yaml
 # app/config/password_dev.yml
-omnipay:
+parameters:
 
     # Authorize.NET AIM
-    authorize_net_aim:
-        apiLoginId: myLoginId
-        transactionKey: myTransactionKey
+    omnipay.authorize_net_aim.apiLoginId: myLoginId
+    omnipay.authorize_net_aim.transactionKey: myTransactionKey
+    omnipay.authorize_net_aim.gateway: AuthorizeNet_AIM
 
     # Stripe
-    stripe:
-        apiKey: myApiKey
-```
+    omnipay.stripe.apiKey: myApiKey
+    omnipay.stripe.gateway: Stripe
 
-In the configuration file, you'll need to "underscore" the names of the gateways, but their parameters should be left
-intact i.e. the gateway name "AuthorizeNet_AIM" becomes "authorize_net_aim", however all it's parameters remain
-unchanged and remain in camel case.
+    # Custom gateway
+    omnipay.custom_gateway.apiKey: myCustomGatewayKey
+    omnipay.custom_gateway.gateway: \Custom\Gateway
+```
 
 Usage
 -----
-Use the new `omnipay` service to create gateway classes:
+Use the new `omnipay` service to create gateway object:
 
 ```php
-// From within a controller
-$gateway = $this->get('omnipay')->create('Stripe');
+    // From within a controller. This will return an instance `\Omnipay\Stripe`
+    $gateway = $this->get('omnipay')->create('stripe');
+```
 
-// The rest is identical to how you would normally use Omnipay
+Use `omnipay` service to create custom gateway object
 
+```php
+    // From within a controller. This will return an instance `\Custom\Gateway`
+    $gateway = $this->get('omnipay')->create('custom_gateway');
+```
+
+
+The rest is identical to how you would normally use Omnipay
+
+```php
 $formData = ['number' => '4242424242424242', 'expiryMonth' => '11', 'expiryYear' => '2018', 'cvv' => '123'];
 $response = $gateway->purchase(['amount' => '10.00', 'currency' => 'USD', 'card' => $formData])->send();
 
