@@ -25,35 +25,36 @@ it's possible to configure these parameters in your Symfony config files.
 ```yaml
 # app/config/password_dev.yml
 parameters:
+    # Custom gateway
+    omnipay.my_custom_name.apiKey: myGatewayKey
+    omnipay.my_custom_name.gateway: MyGateway
+
+    # Default Stripe gateway
+    omnipay.stripe_default.apiKey: myApiKey
+    omnipay.stripe_default.gateway: Stripe
+
+    # Gateway for Stripe Canada account
+    omnipay.stripe_canada.apiKey: myStripeCanadaApiKey
+    omnipay.stripe_canada.gateway: Stripe
 
     # Authorize.NET AIM
-    omnipay.authorize_net_aim.apiLoginId: myLoginId
     omnipay.authorize_net_aim.transactionKey: myTransactionKey
     omnipay.authorize_net_aim.gateway: AuthorizeNet_AIM
-
-    # Stripe
-    omnipay.stripe.apiKey: myApiKey
-    omnipay.stripe.gateway: Stripe
-
-    # Custom gateway
-    omnipay.custom_gateway.apiKey: myCustomGatewayKey
-    omnipay.custom_gateway.gateway: \Custom\Gateway
 ```
+In the sample configuration above, `my_custom_name` is a unique name you define for each of your gateways. `omnipay.my_custom_name.gateway` is the class name for a Omnipay gateway driver (eg `Stripe`). You may choose to define multiple names for the same Omnipay gateway with different credentials. Eg. we have configured two gateway definitions for Stripe, both use the same Omnipay driver, however, they use different sets of credentials.
+
 
 Usage
 -----
 Use the new `omnipay` service to create gateway object:
 
 ```php
-    // From within a controller. This will return an instance `\Omnipay\Stripe`
-    $gateway = $this->get('omnipay')->create('stripe');
-```
+    // From within a controller. This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as specified in the config.
+    $gateway = $this->get('omnipay')->create('stripe_default');
 
-Use `omnipay` service to create custom gateway object
 
-```php
-    // From within a controller. This will return an instance `\Custom\Gateway`
-    $gateway = $this->get('omnipay')->create('custom_gateway');
+    // From within a controller. This will return an instance of `\Omnipay\MyGateway` as specified in `omnipay.my_custom_name.gateway`
+    $gateway = $this->get('omnipay')->create('my_custom_name');
 ```
 
 
