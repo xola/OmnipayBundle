@@ -2,7 +2,7 @@
     "name": "xola/omnipay-bundle",
     "type": "symfony-bundle",
     "description": "Integrates Omnipay with Symfony2",
-    "keywords": ["omnipay", "payment", "credit card", "gateway"],
+    "keywords": ["omnipay", "payment", "credit card", "gateway", "symfony"],
     "homepage": "https://github.com/xola/OmnipayBundle",
     "license": "MIT",
     "authors": [
