@@ -4,4 +4,4 @@ parameters:
 services:
     omnipay:
         class: %omnipay.service.class%
-        arguments: [ %omnipay% ]
+        arguments: [ @service_container ]

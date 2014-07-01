@@ -24,32 +24,43 @@ it's possible to configure these parameters in your Symfony config files.
 
 ```yaml
 # app/config/password_dev.yml
-omnipay:
+parameters:
+    # Custom gateway
+    omnipay.my_custom_name.apiKey: myGatewayKey
+    omnipay.my_custom_name.gateway: MyGateway
+
+    # Default Stripe gateway
+    omnipay.stripe_default.apiKey: myApiKey
+    omnipay.stripe_default.gateway: Stripe
+
+    # Gateway for Stripe Canada account
+    omnipay.stripe_canada.apiKey: myStripeCanadaApiKey
+    omnipay.stripe_canada.gateway: Stripe
 
     # Authorize.NET AIM
-    authorize_net_aim:
-        apiLoginId: myLoginId
-        transactionKey: myTransactionKey
-
-    # Stripe
-    stripe:
-        apiKey: myApiKey
+    omnipay.authorize_net_aim.transactionKey: myTransactionKey
+    omnipay.authorize_net_aim.gateway: AuthorizeNet_AIM
 ```
+In the sample configuration above, `my_custom_name` is a unique name you define for each of your gateways. `omnipay.my_custom_name.gateway` is the class name for a Omnipay gateway driver (eg `Stripe`). You may choose to define multiple names for the same Omnipay gateway with different credentials. Eg. we have configured two gateway definitions for Stripe, both use the same Omnipay driver, however, they use different sets of credentials.
 
-In the configuration file, you'll need to "underscore" the names of the gateways, but their parameters should be left
-intact i.e. the gateway name "AuthorizeNet_AIM" becomes "authorize_net_aim", however all it's parameters remain
-unchanged and remain in camel case.
 
 Usage
 -----
-Use the new `omnipay` service to create gateway classes:
+Use the new `omnipay` service to create gateway object:
 
 ```php
-// From within a controller
-$gateway = $this->get('omnipay')->create('Stripe');
+    // From within a controller. This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as specified in the config.
+    $gateway = $this->get('omnipay')->get('stripe_default');
 
-// The rest is identical to how you would normally use Omnipay
 
+    // From within a controller. This will return an instance of `\Omnipay\MyGateway` as specified in `omnipay.my_custom_name.gateway`
+    $gateway = $this->get('omnipay')->get('my_custom_name');
+```
+
+
+The rest is identical to how you would normally use Omnipay
+
+```php
 $formData = ['number' => '4242424242424242', 'expiryMonth' => '11', 'expiryYear' => '2018', 'cvv' => '123'];
 $response = $gateway->purchase(['amount' => '10.00', 'currency' => 'USD', 'card' => $formData])->send();
 
