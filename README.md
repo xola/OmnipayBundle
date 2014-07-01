@@ -50,11 +50,11 @@ Use the new `omnipay` service to create gateway object:
 
 ```php
     // From within a controller. This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as specified in the config.
-    $gateway = $this->get('omnipay')->create('stripe_default');
+    $gateway = $this->get('omnipay')->get('stripe_default');
 
 
     // From within a controller. This will return an instance of `\Omnipay\MyGateway` as specified in `omnipay.my_custom_name.gateway`
-    $gateway = $this->get('omnipay')->create('my_custom_name');
+    $gateway = $this->get('omnipay')->get('my_custom_name');
 ```
 
 

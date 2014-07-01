@@ -5,21 +5,36 @@ namespace Xola\OmnipayBundle\Service;
 use Symfony\Component\DependencyInjection\Container as Helper;
 use Omnipay\Common\GatewayInterface;
 use Omnipay\Common\GatewayFactory;
+use Omnipay\Common\AbstractGateway;
 
 class Omnipay
 {
     protected $config;
+    protected $cache = array();
 
     public function __construct(Helper $container)
     {
         $this->parameters = $container->getParameterBag()->all();
     }
 
-    public function create($name)
+    /**
+     * Returns an Omnipay gateway.
+     *
+     * @param string $name Name of the gateway as defined in the config
+     *
+     * @return AbstractGateway
+     */
+    public function get($name)
     {
+        if (isset($this->cache[$name])) {
+            // We've already instantiated this gateway, so just return the cached copy
+            return $this->cache[$name];
+        }
+
         $config = $this->getConfig();
 
         $factory = new GatewayFactory();
+
         /** @var GatewayInterface $gateway */
         $gateway = $factory->create($config[$name]['gateway']);
 
@@ -27,6 +42,9 @@ class Omnipay
         if (isset($config[$name])) {
             $gateway->initialize($config[$name]);
         }
+
+        // Cache the gateway
+        $this->cache[$name] = $gateway;
 
         return $gateway;
     }
