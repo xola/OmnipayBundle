@@ -19,8 +19,9 @@ class Omnipay
     {
         $config = $this->getConfig();
 
+        $factory = new GatewayFactory();
         /** @var GatewayInterface $gateway */
-        $gateway = GatewayFactory::create($config[$name]['gateway']);
+        $gateway = $factory->create($config[$name]['gateway']);
 
         // Initialize the gateway with config parameters
         if (isset($config[$name])) {
