@@ -718,4 +718,16 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $service->getConfig(), 'Array structured config should match');
     }
+
+    public function testGetGatewayName()
+    {
+        $config = array(
+            'omnipay.stripe_canada.gateway' => 'Stripe',
+        );
+        $serviceContainer = $this->getServiceContainer($config);
+
+        $service = $this->buildService(array('container' => $serviceContainer));
+        $this->assertEquals('Stripe', $service->getGatewayName('stripe_canada'), 'The configured gateway name should return');
+        $this->assertNull($service->getGatewayName('stripe_uk'), 'Invalid gateway key should return null');
+    }
 }
