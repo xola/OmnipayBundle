@@ -20,6 +20,9 @@
         "symfony/framework-bundle": "~2.1",
         "omnipay/common": "~2.0"
     },
+    "require-dev": {
+        "omnipay/stripe": "~2.0"
+    },
     "autoload": {
         "psr-0": {
             "Xola\\OmnipayBundle": ""

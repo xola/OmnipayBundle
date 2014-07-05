@@ -22,16 +22,28 @@ class Omnipay
      *
      * @param string $key The gateway key as defined in the config
      *
+     * @throws \RuntimeException If no gateway is configured for the key
      * @return AbstractGateway
      */
-    public function get($key)
+    public function get($key = null)
     {
+        $config = $this->getConfig();
+
+        if (is_null($key) && isset($config['default'])) {
+            // No key was specified, so use the default gateway
+            $key = $config['default'];
+        }
+
         if (isset($this->cache[$key])) {
             // We've already instantiated this gateway, so just return the cached copy
             return $this->cache[$key];
         }
 
-        $config = $this->getConfig();
+        if (!isset($config[$key])) {
+            // Invalid gateway key
+            throw new \RuntimeException('Gateway key "' . $key . '" is not configured');
+        }
+
         $factory = new GatewayFactory();
         /** @var GatewayInterface $gateway */
         $gateway = $factory->create($config[$key]['gateway']);
@@ -59,7 +71,7 @@ class Omnipay
         $gateway = null;
         $config = $this->getConfig();
 
-        if(isset($config[$key])) {
+        if (isset($config[$key])) {
             $gateway = $config[$key]['gateway'];
         }
 

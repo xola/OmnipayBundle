@@ -725,9 +725,20 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.stripe_canada.gateway' => 'Stripe',
         );
         $serviceContainer = $this->getServiceContainer($config);
-
         $service = $this->buildService(array('container' => $serviceContainer));
         $this->assertEquals('Stripe', $service->getGatewayName('stripe_canada'), 'The configured gateway name should return');
         $this->assertNull($service->getGatewayName('stripe_uk'), 'Invalid gateway key should return null');
+    }
+
+    public function testGetDefault()
+    {
+        $config = [
+            'omnipay.default' => 'my_gateway',
+            'omnipay.my_gateway.gateway' => 'Stripe'
+        ];
+        $serviceContainer = $this->getServiceContainer($config);
+        $service = $this->buildService(array('container' => $serviceContainer));
+        $gateway = $service->get();
+        $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
     }
 }
