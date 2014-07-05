@@ -732,10 +732,10 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefault()
     {
-        $config = [
+        $config = array(
             'omnipay.default' => 'my_gateway',
             'omnipay.my_gateway.gateway' => 'Stripe'
-        ];
+        );
         $serviceContainer = $this->getServiceContainer($config);
         $service = $this->buildService(array('container' => $serviceContainer));
         $gateway = $service->get();
