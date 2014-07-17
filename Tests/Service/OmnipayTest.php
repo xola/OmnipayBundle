@@ -2,6 +2,7 @@
 
 namespace Xola\OmnipayBundle\Tests\Service;
 
+use Omnipay\Stripe\Gateway as StripeGateway;
 use Xola\OmnipayBundle\Service\Omnipay;
 
 class OmnipayTest extends \PHPUnit_Framework_TestCase
@@ -734,11 +735,31 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
     {
         $config = array(
             'omnipay.default' => 'my_gateway',
-            'omnipay.my_gateway.gateway' => 'Stripe'
+            'omnipay.my_gateway.gateway' => 'Stripe',
+            'omnipay.my_gateway.apiKey' => 'abc123'
         );
         $serviceContainer = $this->getServiceContainer($config);
         $service = $this->buildService(array('container' => $serviceContainer));
+
+        /** @var StripeGateway $gateway */
         $gateway = $service->get();
         $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
+        $this->assertEquals('abc123', $gateway->getApiKey(), 'API key should be set');
+    }
+
+    public function testGetWithParameters()
+    {
+        $config = array(
+            'omnipay.default' => 'my_gateway',
+            'omnipay.my_gateway.gateway' => 'Stripe',
+            'omnipay.my_gateway.apiKey' => 'abc123'
+        );
+        $serviceContainer = $this->getServiceContainer($config);
+        $service = $this->buildService(array('container' => $serviceContainer));
+
+        /** @var StripeGateway $gateway */
+        $gateway = $service->get('my_gateway', array('apiKey' => 'xyz789'));
+        $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
+        $this->assertEquals('xyz789', $gateway->getApiKey(), 'API key should be overridden');
     }
 }
