@@ -39,14 +39,16 @@ class Omnipay
             return $this->cache[$key];
         }
 
-        if (!isset($config[$key])) {
+        $gatewayName = $this->getGatewayName($key);
+
+        if (!$gatewayName) {
             // Invalid gateway key
             throw new \RuntimeException('Gateway key "' . $key . '" is not configured');
         }
 
         $factory = new GatewayFactory();
         /** @var GatewayInterface $gateway */
-        $gateway = $factory->create($config[$key]['gateway']);
+        $gateway = $factory->create($gatewayName);
 
         // Initialize the gateway with config parameters
         if (isset($config[$key])) {
