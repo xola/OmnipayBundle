@@ -104,6 +104,17 @@ class Omnipay
     }
 
     /**
+     * Sets the default parameters for a gateway key.
+     *
+     * @param string $key   Gateway key
+     * @param mixed  $value Parameters for the gateway
+     */
+    public function setConfig($key, $value)
+    {
+        $this->config[$key] = $value;
+    }
+
+    /**
      * Helper method to convert a config in dot notation to a multi-dimensional array
      * For example: "subscription.default: free" becomes array('subscription' => array('default' => 'free'))
      *

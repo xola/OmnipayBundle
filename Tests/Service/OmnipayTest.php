@@ -762,4 +762,19 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
         $this->assertEquals('xyz789', $gateway->getApiKey(), 'API key should be overridden');
     }
+
+    public function testSetConfig()
+    {
+        $config = array(
+            'omnipay.default' => 'my_gateway',
+            'omnipay.my_gateway.gateway' => 'Stripe',
+            'omnipay.my_gateway.apiKey' => 'abc123'
+        );
+        $serviceContainer = $this->getServiceContainer($config);
+        $service = $this->buildService(array('container' => $serviceContainer));
+
+        $service->setConfig('my_gateway', array('apiKey' => 'xyz789'));
+        $serviceConfig = $service->getConfig();
+        $this->assertEquals('xyz789', $serviceConfig['my_gateway']['apiKey'], 'API key should be updated');
+    }
 }
