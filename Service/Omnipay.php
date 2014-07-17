@@ -14,7 +14,21 @@ class Omnipay
 
     public function __construct(Container $container)
     {
-        $this->parameters = $container->getParameterBag()->all();
+        $this->initConfig($container->getParameterBag()->all());
+    }
+
+    private function initConfig($parameters)
+    {
+        $key = 'omnipay';
+        $configs = array($key);
+        foreach ($parameters as $param => $value) {
+            if (!preg_match("/^$key/", $param)) {
+                continue;
+            }
+            $this->assignArrayByPath($configs, $param, $value);
+        }
+
+        $this->config = isset($configs[$key]) ? $configs[$key] : null;
     }
 
     /**
@@ -86,20 +100,6 @@ class Omnipay
 
     public function getConfig()
     {
-        if (!isset($this->config)) {
-            // Config has not been parsed yet. So do it.
-            $key = 'omnipay';
-            $configs = array($key);
-            foreach ($this->parameters as $param => $value) {
-                if (!preg_match("/^$key/", $param)) {
-                    continue;
-                }
-                $this->assignArrayByPath($configs, $param, $value);
-            }
-
-            $this->config = isset($configs[$key]) ? $configs[$key] : null;
-        }
-
         return $this->config;
     }
 
