@@ -3,7 +3,7 @@ Xola OmnipayBundle [![Build status...](https://secure.travis-ci.org/xola/Omnipay
 This bundle integrates the [Omnipay payment processing library](https://github.com/adrianmacneil/omnipay) into
 [Symfony2](http://symfony.com/).
 
-This bundle supports Omnipay 1.x and 2.x
+This bundle supports Omnipay 2.x
 
 Installation
 ------------
@@ -26,8 +26,8 @@ it's possible to configure these parameters in your Symfony config files.
 # app/config/password_dev.yml
 parameters:
     # Custom gateway
-    omnipay.my_custom_name.apiKey: myGatewayKey
-    omnipay.my_custom_name.gateway: MyGateway
+    omnipay.my_custom_key.apiKey: myGatewayKey
+    omnipay.my_custom_key.gateway: MyGateway
 
     # Default Stripe gateway
     omnipay.stripe_default.apiKey: myApiKey
@@ -41,7 +41,11 @@ parameters:
     omnipay.authorize_net_aim.transactionKey: myTransactionKey
     omnipay.authorize_net_aim.gateway: AuthorizeNet_AIM
 ```
-In the sample configuration above, `my_custom_name` is a unique name you define for each of your gateways. `omnipay.my_custom_name.gateway` is the class name for a Omnipay gateway driver (eg `Stripe`). You may choose to define multiple names for the same Omnipay gateway with different credentials. Eg. we have configured two gateway definitions for Stripe, both use the same Omnipay driver, however, they use different sets of credentials.
+In the sample configuration above, `my_custom_key` is a unique key you define for each of your gateways.
+`omnipay.my_custom_name.gateway` is the class name for a Omnipay gateway driver (e.g. `Stripe`). You may choose to define
+multiple keys for the same Omnipay gateway with different credentials. In the above configuration, we have configured
+two gateway definitions for Stripe -- both use the Stripe Omnipay driver, however, they each use a different set of
+credentials.
 
 
 Usage
@@ -49,11 +53,12 @@ Usage
 Use the new `omnipay` service to create gateway object:
 
 ```php
-    // From within a controller. This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as specified in the config.
+    // From within a controller. This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as
+    // specified in the config.
     $gateway = $this->get('omnipay')->get('stripe_default');
 
-
-    // From within a controller. This will return an instance of `\Omnipay\MyGateway` as specified in `omnipay.my_custom_name.gateway`
+    // From within a controller. This will return an instance of `\Omnipay\MyGateway` as specified in
+    // `omnipay.my_custom_name.gateway`
     $gateway = $this->get('omnipay')->get('my_custom_name');
 ```
 

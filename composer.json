@@ -24,7 +24,9 @@
         "guzzle/log": "~3.7"
     },
     "autoload": {
-        "psr-0": { "Xola\\OmnipayBundle": "" }
+        "psr-0": {
+            "Xola\\OmnipayBundle": ""
+        }
     },
     "target-dir": "Xola/OmnipayBundle"
 }
