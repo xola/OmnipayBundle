@@ -4,4 +4,6 @@ parameters:
 services:
     omnipay:
         class: %omnipay.service.class%
-        arguments: [ @service_container ]
+        arguments: [ @service_container, @logger ]
+        tags:
+              - { name: monolog.logger, channel: omnipay }
