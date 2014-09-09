@@ -21,7 +21,8 @@
         "omnipay/common": "~2.0",
         "guzzle/http": "~3.7",
         "guzzle/plugin": "~3.7",
-        "guzzle/log": "~3.7"
+        "guzzle/log": "~3.7",
+        "psr/log": "1.0"
     },
     "require-dev": {
         "omnipay/omnipay": "~2.0"
