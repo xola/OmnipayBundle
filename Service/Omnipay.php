@@ -28,8 +28,8 @@ class Omnipay
     {
         $key = 'omnipay';
         $configs = array($key);
-        foreach($parameters as $param => $value) {
-            if(!preg_match("/^$key/", $param)) {
+        foreach ($parameters as $param => $value) {
+            if (!preg_match("/^$key/", $param)) {
                 continue;
             }
             $this->assignArrayByPath($configs, $param, $value);
@@ -51,18 +51,18 @@ class Omnipay
     {
         $config = $this->getConfig();
 
-        if(is_null($key) && isset($config['default'])) {
+        if (is_null($key) && isset($config['default'])) {
             // No key was specified, so use the default gateway
             $key = $config['default'];
         }
 
-        if(isset($this->cache[$key])) {
+        if (isset($this->cache[$key])) {
             // We've already instantiated this gateway, so just return the cached copy
             return $this->cache[$key];
         }
 
         $gatewayName = $this->getGatewayName($key);
-        if(!$gatewayName) {
+        if (!$gatewayName) {
             // Invalid gateway key
             throw new \RuntimeException('Gateway key "' . $key . '" is not configured');
         }
@@ -77,11 +77,11 @@ class Omnipay
         /** @var GatewayInterface $gateway */
         $gateway = $factory->create($gatewayName, $client);
 
-        if($parameters) {
+        if ($parameters) {
             // Custom parameters have been specified, so use them
             $gateway->initialize($parameters);
 
-        } elseif(isset($config[$key])) {
+        } elseif (isset($config[$key])) {
             // Default parameters have been configured, so use them
             $gateway->initialize($config[$key]);
         }
@@ -104,7 +104,7 @@ class Omnipay
         $gateway = null;
         $config = $this->getConfig();
 
-        if(isset($config[$key])) {
+        if (isset($config[$key])) {
             $gateway = $config[$key]['gateway'];
         }
 
@@ -139,7 +139,7 @@ class Omnipay
     {
         $keys = explode('.', $path);
 
-        while($key = array_shift($keys)) {
+        while ($key = array_shift($keys)) {
             $arr = & $arr[$key];
         }
 
