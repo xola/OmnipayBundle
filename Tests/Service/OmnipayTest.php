@@ -10,12 +10,13 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
     private function buildService($params = array())
     {
         $defaults = array(
-            'container' => $this->getMock('Symfony\Component\DependencyInjection\Container')
+            'container' => $this->getMock('Symfony\Component\DependencyInjection\Container'),
+            'logger' => $this->getMock('Psr\Log\LoggerInterface')
         );
 
         $params = array_merge($defaults, $params);
 
-        return new Omnipay($params['container']);
+        return new Omnipay($params['container'], $params['logger']);
     }
 
     /**
@@ -57,7 +58,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.authorize_net_aim.gateway' => 'AuthorizeNet_AIM'
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\AuthorizeNet\AIMGateway $gateway */
         $gateway = $service->get('authorize_net_aim');
@@ -85,7 +86,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.authorize_net_sim.gateway' => 'AuthorizeNet_SIM',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\AuthorizeNet\AIMGateway $gateway */
         $gateway = $service->get('authorize_net_sim');
@@ -113,7 +114,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.buckaroo.gateway' => 'Buckaroo',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Buckaroo\Gateway $gateway */
         $gateway = $service->get('buckaroo');
@@ -137,7 +138,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.card_save.gateway' => 'CardSave',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\CardSave\Gateway $gateway */
         $gateway = $service->get('card_save');
@@ -161,7 +162,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.eway_rapid.gateway' => 'Eway_Rapid',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Eway\RapidGateway $gateway */
         $gateway = $service->get('eway_rapid');
@@ -187,7 +188,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.go_cardless.gateway' => 'GoCardless',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\GoCardless\Gateway $gateway */
         $gateway = $service->get('go_cardless');
@@ -214,7 +215,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.migs_two_party.gateway' => 'Migs_TwoParty',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Migs\TwoPartyGateway $gateway */
         $gateway = $service->get('migs_two_party');
@@ -244,7 +245,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.migs_three_party.gateway' => 'Migs_ThreeParty',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Migs\ThreePartyGateway $gateway */
         $gateway = $service->get('migs_three_party');
@@ -272,7 +273,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.mollie.gateway' => 'Mollie',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Mollie\Gateway $gateway */
         $gateway = $service->get('mollie');
@@ -296,7 +297,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.multi_safepay.gateway' => 'MultiSafepay',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\MultiSafepay\Gateway $gateway */
         $gateway = $service->get('multi_safepay');
@@ -321,7 +322,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.netaxept.gateway' => 'Netaxept',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Netaxept\Gateway $gateway */
         $gateway = $service->get('netaxept');
@@ -346,7 +347,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.net_banx.gateway' => 'NetBanx',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\NetBanx\Gateway $gateway */
         $gateway = $service->get('net_banx');
@@ -372,7 +373,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.pay_fast.gateway' => 'PayFast',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\PayFast\Gateway $gateway */
         $gateway = $service->get('pay_fast');
@@ -399,7 +400,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.payflow_pro.gateway' => 'Payflow_Pro',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Payflow\ProGateway $gateway */
         $gateway = $service->get('payflow_pro');
@@ -425,7 +426,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.payment_express_px_pay.gateway' => 'PaymentExpress_PxPay',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\PaymentExpress\PxPayGateway $gateway */
         $gateway = $service->get('payment_express_px_pay');
@@ -453,7 +454,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.payment_express_px_post.gateway' => 'PaymentExpress_PxPost',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\PaymentExpress\PxPostGateway $gateway */
         $gateway = $service->get('payment_express_px_post');
@@ -482,7 +483,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.pay_pal_pro.gateway' => 'PayPal_Pro',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\PayPal\ProGateway $gateway */
         $gateway = $service->get('pay_pal_pro');
@@ -511,7 +512,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.pay_pal_express.gateway' => 'PayPal_Express',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\PayPal\ExpressGateway $gateway */
         $gateway = $service->get('pay_pal_express');
@@ -538,7 +539,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.pin.gateway' => 'Pin'
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Pin\Gateway $gateway */
         $gateway = $service->get('pin');
@@ -560,7 +561,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.sage_pay_direct.gateway' => 'SagePay_Direct'
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\SagePay\DirectGateway $gateway */
         $gateway = $service->get('sage_pay_direct');
@@ -582,7 +583,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.sage_pay_server.gateway' => 'SagePay_Server',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\SagePay\ServerGateway $gateway */
         $gateway = $service->get('sage_pay_server');
@@ -605,7 +606,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.secure_pay_direct_post.gateway' => 'SecurePay_DirectPost',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\SecurePay\DirectPostGateway $gateway */
         $gateway = $service->get('secure_pay_direct_post');
@@ -639,7 +640,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.stripe.gateway' => 'Stripe'
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\Stripe\Gateway $gateway */
         $gateway = $service->get('stripe');
@@ -662,7 +663,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.two_checkout.gateway' => 'TwoCheckout',
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\TwoCheckout\Gateway $gateway */
         $gateway = $service->get('two_checkout');
@@ -687,7 +688,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             'omnipay.world_pay.gateway' => 'WorldPay'
         );
 
-        $service = new Omnipay($this->getServiceContainer($config));
+        $service = $this->buildService(array('container' => $this->getServiceContainer($config)));
 
         /** @var \Omnipay\WorldPay\Gateway $gateway */
         $gateway = $service->get('world_pay');
@@ -727,7 +728,11 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         );
         $serviceContainer = $this->getServiceContainer($config);
         $service = $this->buildService(array('container' => $serviceContainer));
-        $this->assertEquals('Stripe', $service->getGatewayName('stripe_canada'), 'The configured gateway name should return');
+        $this->assertEquals(
+            'Stripe',
+            $service->getGatewayName('stripe_canada'),
+            'The configured gateway name should return'
+        );
         $this->assertNull($service->getGatewayName('stripe_uk'), 'Invalid gateway key should return null');
     }
 
