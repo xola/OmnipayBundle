@@ -2,19 +2,26 @@
 
 namespace Xola\OmnipayBundle\Service;
 
+use Guzzle\Http\Client;
+use Guzzle\Log\MessageFormatter;
+use Guzzle\Log\PsrLogAdapter;
+use Guzzle\Plugin\Log\LogPlugin;
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Common\GatewayFactory;
 use Omnipay\Common\GatewayInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Container;
 
 class Omnipay
 {
     protected $config;
     protected $cache = array();
+    protected $logger;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, LoggerInterface $logger)
     {
         $this->initConfig($container->getParameterBag()->all());
+        $this->logger = $logger;
     }
 
     private function initConfig($parameters)
@@ -34,8 +41,8 @@ class Omnipay
     /**
      * Returns an Omnipay gateway.
      *
-     * @param string $key Gateway key as defined in the config
-     * @param array $parameters Custom gateway parameters. If set, any default parameters configured will be ignored.
+     * @param string $key        Gateway key as defined in the config
+     * @param array  $parameters Custom gateway parameters. If set, any default parameters configured will be ignored.
      *
      * @throws \RuntimeException If no gateway is configured for the key
      * @return AbstractGateway
@@ -60,9 +67,15 @@ class Omnipay
             throw new \RuntimeException('Gateway key "' . $key . '" is not configured');
         }
 
+        $adapter = new PsrLogAdapter($this->logger);
+        $logPlugin = new LogPlugin($adapter, MessageFormatter::DEBUG_FORMAT);
+
+        $client = new Client();
+        $client->addSubscriber($logPlugin);
+
         $factory = new GatewayFactory();
         /** @var GatewayInterface $gateway */
-        $gateway = $factory->create($gatewayName);
+        $gateway = $factory->create($gatewayName, $client);
 
         if ($parameters) {
             // Custom parameters have been specified, so use them
@@ -118,8 +131,8 @@ class Omnipay
      * Helper method to convert a config in dot notation to a multi-dimensional array
      * For example: "subscription.default: free" becomes array('subscription' => array('default' => 'free'))
      *
-     * @param array $arr The destination array
-     * @param string $path The config in dot notation
+     * @param array  $arr   The destination array
+     * @param string $path  The config in dot notation
      * @param string $value The value to be assigned to the config
      */
     private function assignArrayByPath(&$arr, $path, $value)
