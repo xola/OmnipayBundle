@@ -269,7 +269,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         }
 
         $config = array(
-            'omnipay.mollie.partnerId' => 'abc123',
+            'omnipay.mollie.apiKey' => 'fooBar',
             'omnipay.mollie.gateway' => 'Mollie',
         );
 
@@ -279,7 +279,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $gateway = $service->get('mollie');
 
         $this->assertInstanceOf('Omnipay\\Mollie\\Gateway', $gateway, 'Must return a Mollie gateway');
-        $this->assertEquals('abc123', $gateway->getPartnerId(), 'Partner ID must match configuration');
+        $this->assertEquals('fooBar', $gateway->getApiKey(), 'apiKey must match configuration');
     }
 
     public function testCreateMultiSafepay()
@@ -750,6 +750,24 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $gateway = $service->get();
         $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
         $this->assertEquals('abc123', $gateway->getApiKey(), 'API key should be set');
+    }
+
+    public function testGetDefaultWithKey()
+    {
+        $config = array(
+            'omnipay.default' => 'my_gateway',
+            'omnipay.my_gateway.gateway' => 'Stripe',
+            'omnipay.my_gateway.apiKey' => 'abc123',
+            // Another Stripe gateway which does not have the apiKey
+            'omnipay.another_gateway.gateway' => 'Stripe'
+        );
+        $serviceContainer = $this->getServiceContainer($config);
+        $service = $this->buildService(array('container' => $serviceContainer));
+
+        /** @var StripeGateway $gateway */
+        $gateway = $service->get('another_gateway');
+        $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
+        $this->assertEquals('abc123', $gateway->getApiKey(), 'API key should be take from the gateway with the same name');
     }
 
     public function testGetWithParameters()
