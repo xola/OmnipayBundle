@@ -108,7 +108,7 @@ class Omnipay
             }
         }
 
-        return [];
+        return array();
     }
 
     /**
