@@ -83,13 +83,32 @@ class Omnipay
 
         } elseif (isset($config[$key])) {
             // Default parameters have been configured, so use them
-            $gateway->initialize($config[$key]);
+            $combinedParameters = array_merge($this->getParametersByGatewayName($gatewayName), $config[$key]);
+            $gateway->initialize($combinedParameters);
         }
 
         // Cache the gateway
         $this->cache[$key] = $gateway;
 
         return $gateway;
+    }
+
+    /**
+     * Get omnipay parameters based on the 'gateway' attribute
+     *
+     * @param string $name
+     *
+     * @return array
+     */
+    private function getParametersByGatewayName($name)
+    {
+        foreach ($this->config as $gatewayConfig) {
+            if (isset($gatewayConfig['gateway']) && $gatewayConfig['gateway'] === $name) {
+                return $gatewayConfig;
+            }
+        }
+
+        return array();
     }
 
     /**
