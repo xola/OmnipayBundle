@@ -25,7 +25,8 @@
         "psr/log": "1.0"
     },
     "require-dev": {
-        "omnipay/omnipay": "~2.0"
+        "omnipay/omnipay": "~2.0",
+        "phpunit/phpunit": "~4.5"
     },
     "autoload": {
         "psr-0": {

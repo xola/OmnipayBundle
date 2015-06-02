@@ -624,9 +624,6 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @requires function
-     */
     public function testCreateStripe()
     {
         if (!class_exists('Omnipay\\Stripe\\Gateway')) {
@@ -770,20 +767,19 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('abc123', $gateway->getApiKey(), 'API key should be take from the gateway with the same name');
     }
 
-    public function testGetWithParameters()
+    public function testShouldMergeDefaultParametersDefinedForTheGateway()
     {
         $config = array(
-            'omnipay.default' => 'my_gateway',
             'omnipay.my_gateway.gateway' => 'Stripe',
-            'omnipay.my_gateway.apiKey' => 'abc123'
+            'omnipay.defaults.stripe.apiKey' => 'xyz123'
         );
         $serviceContainer = $this->getServiceContainer($config);
         $service = $this->buildService(array('container' => $serviceContainer));
 
         /** @var StripeGateway $gateway */
-        $gateway = $service->get('my_gateway', array('apiKey' => 'xyz789'));
+        $gateway = $service->get('my_gateway');
         $this->assertInstanceOf('Omnipay\\Stripe\\Gateway', $gateway, 'The default gateway should return');
-        $this->assertEquals('xyz789', $gateway->getApiKey(), 'API key should be overridden');
+        $this->assertEquals('xyz123', $gateway->getApiKey());
     }
 
     public function testSetConfig()
