@@ -42,12 +42,11 @@ class Omnipay
      * Returns an Omnipay gateway.
      *
      * @param string $key        Gateway key as defined in the config
-     * @param array  $parameters Custom gateway parameters. If set, any default parameters configured will be ignored.
      *
      * @throws \RuntimeException If no gateway is configured for the key
      * @return AbstractGateway
      */
-    public function get($key = null, $parameters = null)
+    public function get($key = null)
     {
         $config = $this->getConfig();
 
@@ -77,13 +76,13 @@ class Omnipay
         /** @var GatewayInterface $gateway */
         $gateway = $factory->create($gatewayName, $client);
 
-        if ($parameters) {
-            // Custom parameters have been specified, so use them
-            $gateway->initialize($parameters);
-
-        } elseif (isset($config[$key])) {
+        if (isset($config[$key])) {
             // Default parameters have been configured, so use them
             $combinedParameters = array_merge($this->getParametersByGatewayName($gatewayName), $config[$key]);
+            $gatewayName = strtolower($combinedParameters['gateway']);
+            if (isset($config['defaults'][$gatewayName])) {
+                $combinedParameters = array_merge($combinedParameters, $config['defaults'][$gatewayName]);
+            }
             $gateway->initialize($combinedParameters);
         }
 
