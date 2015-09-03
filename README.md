@@ -17,7 +17,7 @@ To install via [Composer](http://getcomposer.org/), add the following to your `c
 }
 ```
 
-Add the bundle to you application kernel.
+Add the bundle to your application kernel.
 
 ```
 // app/AppKernel.php
