@@ -17,6 +17,20 @@ To install via [Composer](http://getcomposer.org/), add the following to your `c
 }
 ```
 
+Add the bundle to your application kernel.
+
+```php
+// app/AppKernel.php
+public function registerBundles()
+{
+    return array(
+        // ...
+        new Xola\OmnipayBundle\OmnipayBundle(),
+        // ...
+    );
+}
+```
+
 Configuration
 -------------
 (Optional) In the Omnipay library, you would programmatically set parameters required by a gateway. With this bundle,
