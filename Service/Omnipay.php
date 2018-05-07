@@ -17,9 +17,11 @@ class Omnipay
     protected $config;
     protected $cache = array();
     protected $logger;
+    private $container;
 
     public function __construct(Container $container, LoggerInterface $logger)
     {
+        $this->container = $container;
         $this->initConfig($container->getParameterBag()->all());
         $this->logger = $logger;
     }
@@ -67,7 +69,7 @@ class Omnipay
         }
 
         $adapter = new PsrLogAdapter($this->logger);
-        $logPlugin = new LogPlugin($adapter, MessageFormatter::DEBUG_FORMAT);
+        $logPlugin = new LogPlugin($adapter, $this->config['log']['format']);
 
         $client = new Client();
         $client->addSubscriber($logPlugin);
