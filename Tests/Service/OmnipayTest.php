@@ -2,6 +2,7 @@
 
 namespace Xola\OmnipayBundle\Tests\Service;
 
+use Guzzle\Log\MessageFormatter;
 use Omnipay\Stripe\Gateway as StripeGateway;
 use Xola\OmnipayBundle\Service\Omnipay;
 
@@ -26,6 +27,7 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
      */
     private function getServiceContainer($params)
     {
+        $params['omnipay.log.format'] = MessageFormatter::DEBUG_FORMAT;
         $parameterBag = $this->getMock('Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface');
 
         $parameterBag
@@ -708,6 +710,9 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $service = $this->buildService(array('container' => $serviceContainer));
 
         $expected = array(
+            'log' => array(
+                'format' => MessageFormatter::DEBUG_FORMAT
+            ),
             'world_pay' => array(
                 'installationId' => 'abc123',
                 'secretWord' => 'xyz987',
