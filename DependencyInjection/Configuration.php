@@ -18,7 +18,9 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('omnipay');
         $rootNode->children()
-            ->arrayNode('log')->children()
+            ->arrayNode('log')
+            ->addDefaultsIfNotSet()
+            ->children()
                 ->scalarNode('format')
                     ->defaultValue(MessageFormatter::DEBUG_FORMAT);
 
