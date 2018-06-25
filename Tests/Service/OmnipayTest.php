@@ -805,7 +805,9 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
 
     public function testDefaultBundleConfig()
     {
-        $containerBuilder = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder');
+        $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(array('setParameter'))
+            ->getMock();
 
         $containerBuilder
             ->expects($this->at(0)) // Values get set before YAML config is loaded
@@ -826,7 +828,9 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $containerBuilder = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder');
+        $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(array('setParameter'))
+            ->getMock();
 
         $containerBuilder
             ->expects($this->at(0)) // Values get set before YAML config is loaded
