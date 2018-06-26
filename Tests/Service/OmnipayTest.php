@@ -5,6 +5,7 @@ namespace Xola\OmnipayBundle\Tests\Service;
 use Guzzle\Log\MessageFormatter;
 use Omnipay\Stripe\Gateway as StripeGateway;
 use Xola\OmnipayBundle\Service\Omnipay;
+use Xola\OmnipayBundle\DependencyInjection\OmnipayExtension;
 
 class OmnipayTest extends \PHPUnit_Framework_TestCase
 {
@@ -800,5 +801,43 @@ class OmnipayTest extends \PHPUnit_Framework_TestCase
         $service->setConfig('my_gateway', array('apiKey' => 'xyz789'));
         $serviceConfig = $service->getConfig();
         $this->assertEquals('xyz789', $serviceConfig['my_gateway']['apiKey'], 'API key should be updated');
+    }
+
+    public function testDefaultBundleConfig()
+    {
+        $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(array('setParameter'))
+            ->getMock();
+
+        $containerBuilder
+            ->expects($this->at(0)) // Values get set before YAML config is loaded
+            ->method('setParameter')
+            ->with('omnipay.log.format', MessageFormatter::DEBUG_FORMAT);
+
+        $extension = new OmnipayExtension();
+        $extension->load(array(), $containerBuilder);
+    }
+
+    public function testSetBundleConfig()
+    {
+        $config = array(
+            array(
+                'log' => array(
+                    'format' => 'abc123'
+                )
+            )
+        );
+
+        $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(array('setParameter'))
+            ->getMock();
+
+        $containerBuilder
+            ->expects($this->at(0)) // Values get set before YAML config is loaded
+            ->method('setParameter')
+            ->with('omnipay.log.format', 'abc123');
+
+        $extension = new OmnipayExtension();
+        $extension->load($config, $containerBuilder);
     }
 }
