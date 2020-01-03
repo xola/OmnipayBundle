@@ -1,23 +1,13 @@
 {
     "name": "xola/omnipay-bundle",
     "type": "symfony-bundle",
-    "description": "Integrates Omnipay with Symfony2",
+    "description": "Integrates Omnipay with Symfony2+",
     "keywords": ["omnipay", "payment", "credit card", "gateway", "symfony"],
     "homepage": "https://github.com/xola/OmnipayBundle",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Anush Ramani",
-            "email": "anush@xola.com"
-        },
-        {
-            "name": "Venkata Krishna Kotra",
-            "email": "kotrakrishna@gmail.com"
-        }
-    ],
     "require": {
         "php": ">=5.3.2",
-        "symfony/framework-bundle": "~2.1",
+        "symfony/framework-bundle": ">=2.1 <4.0",
         "omnipay/common": "~2.0",
         "guzzle/http": "~3.7",
         "guzzle/plugin": "~3.7",
