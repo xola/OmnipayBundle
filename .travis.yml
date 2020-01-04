@@ -6,8 +6,8 @@ php:
   - 7.4
 
 env:
-  - SYMFONY_VERSION="2.1"
-  - SYMFONY_VERSION="3.0"
+  - SYMFONY_VERSION="~2"
+  - SYMFONY_VERSION="~3"
 
 before_script:
   - composer self-update
