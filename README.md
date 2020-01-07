@@ -12,7 +12,7 @@ To install via [Composer](http://getcomposer.org/), add the following to your `c
 ```json
 {
     "require": {
-        "xola/omnipay-bundle": "1.*"
+        "xola/omnipay-bundle": "^3"
     }
 }
 ```
