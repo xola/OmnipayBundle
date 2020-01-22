@@ -3,7 +3,7 @@ Xola OmnipayBundle [![Build status...](https://secure.travis-ci.org/xola/Omnipay
 This bundle integrates the [Omnipay payment processing library](https://github.com/adrianmacneil/omnipay) into
 [Symfony2](http://symfony.com/).
 
-This bundle supports Omnipay 2.x
+This bundle supports Omnipay 3
 
 Installation
 ------------
@@ -12,7 +12,7 @@ To install via [Composer](http://getcomposer.org/), add the following to your `c
 ```json
 {
     "require": {
-        "xola/omnipay-bundle": "1.*"
+        "xola/omnipay-bundle": "^3"
     }
 }
 ```

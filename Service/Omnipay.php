@@ -2,14 +2,15 @@
 
 namespace Xola\OmnipayBundle\Service;
 
-use Guzzle\Http\Client;
-use Guzzle\Log\MessageFormatter;
-use Guzzle\Log\PsrLogAdapter;
-use Guzzle\Plugin\Log\LogPlugin;
-use Omnipay\Common\AbstractGateway;
+use Http\Client\Common\Plugin\LoggerPlugin;
+use Http\Client\Common\PluginClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Message\Formatter\FullHttpMessageFormatter;
 use Omnipay\Common\GatewayFactory;
 use Omnipay\Common\GatewayInterface;
+use Omnipay\Common\Http\Client;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Container;
 
 class Omnipay
@@ -43,10 +44,10 @@ class Omnipay
     /**
      * Returns an Omnipay gateway.
      *
-     * @param string $key        Gateway key as defined in the config
+     * @param string $key Gateway key as defined in the config
      *
-     * @throws \RuntimeException If no gateway is configured for the key
-     * @return AbstractGateway
+     * @return GatewayInterface
+     * @throws RuntimeException If no gateway is configured for the key
      */
     public function get($key = null)
     {
@@ -65,17 +66,14 @@ class Omnipay
         $gatewayName = $this->getGatewayName($key);
         if (!$gatewayName) {
             // Invalid gateway key
-            throw new \RuntimeException('Gateway key "' . $key . '" is not configured');
+            throw new RuntimeException('Gateway key "' . $key . '" is not configured');
         }
 
-        $adapter = new PsrLogAdapter($this->logger);
-        $logPlugin = new LogPlugin($adapter, $this->config['log']['format']);
-
-        $client = new Client();
-        $client->addSubscriber($logPlugin);
+        $loggerPlugin = new LoggerPlugin($this->logger, new FullHttpMessageFormatter());
+        $httpClient = new PluginClient(HttpClientDiscovery::find(), [$loggerPlugin]);
 
         $factory = new GatewayFactory();
-        /** @var GatewayInterface $gateway */
+        $client = new Client($httpClient);
         $gateway = $factory->create($gatewayName, $client);
 
         if (isset($config[$key])) {

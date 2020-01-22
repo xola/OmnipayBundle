@@ -2,12 +2,13 @@
 
 namespace Xola\OmnipayBundle\DependencyInjection;
 
-use Guzzle\Log\MessageFormatter;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const DEBUG_FORMAT = '>>>>>>>>\n{request}\n<<<<<<<<\n{response}\n--------\n{curl_stderr}';
+
     /**
      * Generates the configuration tree builder.
      *
@@ -21,8 +22,8 @@ class Configuration implements ConfigurationInterface
             ->arrayNode('log')
             ->addDefaultsIfNotSet()
             ->children()
-                ->scalarNode('format')
-                    ->defaultValue(MessageFormatter::DEBUG_FORMAT);
+            ->scalarNode('format')
+            ->defaultValue(Configuration::DEBUG_FORMAT);
 
         return $treeBuilder;
     }
