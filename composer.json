@@ -13,7 +13,7 @@
     "license": "MIT",
     "require": {
         "php": ">=7",
-        "symfony/framework-bundle": ">=2.1 <4.0",
+        "symfony/framework-bundle": ">=2.1",
         "league/omnipay": "^3.0",
         "php-http/logger-plugin": "^1.1"
     },
@@ -31,9 +31,8 @@
         "symfony/yaml": "^3.4"
     },
     "autoload": {
-        "psr-0": {
-            "Xola\\OmnipayBundle": ""
+        "psr-4": {
+            "Xola\\OmnipayBundle\\": ""
         }
-    },
-    "target-dir": "Xola/OmnipayBundle"
+    }
 }
