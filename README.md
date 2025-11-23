@@ -1,9 +1,9 @@
 Xola OmnipayBundle [![Build status...](https://secure.travis-ci.org/xola/OmnipayBundle.png)](http://travis-ci.org/xola/OmnipayBundle)
 ==================
 This bundle integrates the [Omnipay payment processing library](https://github.com/adrianmacneil/omnipay) into
-[Symfony2](http://symfony.com/).
+[Symfony 5.4+](http://symfony.com/).
 
-This bundle supports Omnipay 3
+This bundle supports Omnipay 3 and requires **PHP ^7.4** and **Symfony ^5.4**.
 
 Installation
 ------------
@@ -19,8 +19,16 @@ To install via [Composer](http://getcomposer.org/), add the following to your `c
 
 Add the bundle to your application kernel.
 
+**For Symfony 5.4+** (config/bundles.php):
 ```php
-// app/AppKernel.php
+return [
+    // ...
+    Xola\OmnipayBundle\OmnipayBundle::class => ['all' => true],
+];
+```
+
+**For older Symfony versions** (app/AppKernel.php):
+```php
 public function registerBundles()
 {
     return array(
@@ -37,7 +45,7 @@ Configuration
 it's possible to configure these parameters in your Symfony config files.
 
 ```yaml
-# app/config/password_dev.yml
+# config/parameters.yml (or config/services.yaml)
 parameters:
     # Custom gateway
     omnipay.my_custom_key.apiKey: myGatewayKey
@@ -64,15 +72,35 @@ credentials.
 
 Usage
 -----
-Use the new `omnipay` service to create gateway object:
+Use the `omnipay` service to create gateway objects:
 
+**Using Dependency Injection (recommended for Symfony 5.4+):**
 ```php
-    // From within a controller. This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as
-    // specified in the config.
-    $gateway = $this->get('omnipay')->get('stripe_default');
+use Xola\OmnipayBundle\Service\Omnipay;
 
-    // From within a controller. This will return an instance of `\Omnipay\MyGateway` as specified in
-    // `omnipay.my_custom_name.gateway`
+class PaymentController extends AbstractController
+{
+    public function __construct(private Omnipay $omnipay)
+    {
+    }
+
+    public function processPayment()
+    {
+        // This will return an instance `\Omnipay\Stripe`. `stripe_default` is the key as
+        // specified in the config.
+        $gateway = $this->omnipay->get('stripe_default');
+        
+        // This will return an instance of `\Omnipay\MyGateway` as specified in
+        // `omnipay.my_custom_name.gateway`
+        $gateway = $this->omnipay->get('my_custom_name');
+    }
+}
+```
+
+**Using Service Locator (legacy approach):**
+```php
+    // From within a controller
+    $gateway = $this->get('omnipay')->get('stripe_default');
     $gateway = $this->get('omnipay')->get('my_custom_name');
 ```
 

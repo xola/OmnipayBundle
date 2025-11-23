@@ -17,7 +17,7 @@ use Omnipay\Stripe\Gateway as StripeGateway;
 use Omnipay\WorldPay\Gateway as WorldPayGateway;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Xola\OmnipayBundle\DependencyInjection\Configuration;
 use Xola\OmnipayBundle\DependencyInjection\OmnipayExtension;
@@ -28,7 +28,7 @@ class OmnipayTest extends TestCase
     private function buildService($params = array())
     {
         $defaults = array(
-            'container' => $this->createMock(Container::class),
+            'container' => $this->createMock(ContainerInterface::class),
             'logger' => $this->createMock(LoggerInterface::class)
         );
 
@@ -40,7 +40,7 @@ class OmnipayTest extends TestCase
     /**
      * @param array $params
      *
-     * @return Container
+     * @return ContainerInterface
      */
     private function getServiceContainer($params)
     {
@@ -52,7 +52,10 @@ class OmnipayTest extends TestCase
             ->method('all')
             ->will($this->returnValue($params));
 
-        $serviceContainer = $this->createMock(Container::class);
+        $serviceContainer = $this->getMockBuilder(ContainerInterface::class)
+            ->onlyMethods(['get', 'has', 'hasParameter', 'getParameter', 'setParameter', 'set', 'initialized'])
+            ->addMethods(['getParameterBag'])
+            ->getMock();
 
         $serviceContainer
             ->expects($this->once())
