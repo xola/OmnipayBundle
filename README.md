@@ -1,4 +1,4 @@
-Xola OmnipayBundle [![Build status...](https://secure.travis-ci.org/xola/OmnipayBundle.png)](http://travis-ci.org/xola/OmnipayBundle)
+Xola OmnipayBundle [![CI](https://github.com/xola/OmnipayBundle/workflows/CI/badge.svg)](https://github.com/xola/OmnipayBundle/actions)
 ==================
 This bundle integrates the [Omnipay payment processing library](https://github.com/adrianmacneil/omnipay) into
 [Symfony 5.4+](http://symfony.com/).
