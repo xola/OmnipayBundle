@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        symfony-version: ['4.4', '5.4', '6.0']
+    
+    name: PHP 7.4 - Symfony ${{ matrix.symfony-version }}
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        extensions: mbstring, xml, ctype, iconv
+        coverage: none
+    
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+    
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-composer-
+    
+    - name: Install dependencies
+      run: |
+        composer self-update
+        composer --version
+        composer require symfony/framework-bundle:${{ matrix.symfony-version }} --no-update
+        composer install --no-interaction --prefer-dist
+    
+    - name: Run test suite
+      run: vendor/bin/phpunit --configuration phpunit.xml.dist
