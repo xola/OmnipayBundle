@@ -1,9 +1,8 @@
-parameters:
-    omnipay.service.class: Xola\OmnipayBundle\Service\Omnipay
-
 services:
     omnipay:
-        class: "%omnipay.service.class%"
-        arguments: [ "@service_container", "@logger" ]
+        class: Xola\OmnipayBundle\Service\Omnipay
+        arguments:
+            - '@service_container'
+            - '@logger'
         tags:
-              - { name: monolog.logger, channel: omnipay }
+            - { name: monolog.logger, channel: omnipay }

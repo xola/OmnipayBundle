@@ -16,8 +16,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('omnipay');
+        $treeBuilder = new TreeBuilder('omnipay');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode->children()
             ->arrayNode('log')
             ->addDefaultsIfNotSet()
