@@ -10,6 +10,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
+    permissions:
+      contents: read
+    
     strategy:
       matrix:
         symfony-version: ['4.4', '5.4']
