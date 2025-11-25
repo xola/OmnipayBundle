@@ -3,12 +3,12 @@ Xola OmnipayBundle [![Build status...](https://secure.travis-ci.org/xola/Omnipay
 This bundle integrates the [Omnipay payment processing library](https://github.com/adrianmacneil/omnipay) into
 [Symfony](http://symfony.com/).
 
-This bundle supports Omnipay 3 and requires PHP 7.4+ and Symfony 5.4+.
+This bundle supports Omnipay 3 and requires PHP 7.4+ and Symfony 4.4+.
 
 Requirements
 ------------
 - PHP 7.4 or higher
-- Symfony 5.4 or higher
+- Symfony 4.4 or higher
 
 Installation
 ------------
