@@ -11,7 +11,7 @@ use Omnipay\Common\GatewayInterface;
 use Omnipay\Common\Http\Client;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Container;
 
 class Omnipay
 {
@@ -20,7 +20,7 @@ class Omnipay
     protected $logger;
     private $container;
 
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
+    public function __construct(Container $container, LoggerInterface $logger)
     {
         $this->container = $container;
         $this->initConfig($container->getParameterBag()->all());
