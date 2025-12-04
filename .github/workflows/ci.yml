@@ -2,20 +2,20 @@ name: CI
 
 on:
   push:
-    branches: [ master, symfony-5.4 ]
+    branches: [master, symfony-5.4]
   pull_request:
-    branches: [ master, symfony-5.4 ]
+    branches: [master, symfony-5.4]
 
 jobs:
   test:
     name: PHP ${{ matrix.php }} - Symfony ${{ matrix.symfony }}
     runs-on: ubuntu-latest
-    
+
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4']
-        symfony: ['5.4.*']
+        php: ["7.4"]
+        symfony: ["5.4.*"]
 
     steps:
       - name: Checkout code
@@ -51,7 +51,7 @@ jobs:
   code-quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "7.4"
           extensions: mbstring, intl
           coverage: none
           tools: composer:v2
